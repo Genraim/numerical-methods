@@ -7,9 +7,9 @@ counter = 0
 def func(x):
     return 0.5 * math.log10(x) + math.tan(x)
 def first_derivative(x):
-    return 0.5/(x * math.log2(10)) + 1/(math.cos(x))**2
+    return 0.5/(x * math.log1p(10)) + 1/(math.cos(x))**2
 def second_derivative(x):
-    return (-0.5)/(x**2 * math.log2(10) + (2*math.sin(x))/(math.cos(x))**2)
+    return (-0.5)/(x**2 * math.log1p(10) + (2*math.sin(x))/(math.cos(x))**2)
 print("iteration %d;" % counter, "x: %.10f;" % new_sum, "func(x): %.10f" % func(new_sum))
 while(True):
     counter += 1
