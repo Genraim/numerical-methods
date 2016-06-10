@@ -18,7 +18,7 @@ def func(x, y, der_x=0, der_y=0):
             0: 30 * y * ((x - 0.7) + (x - 0.2)),
             1: 30 * ((x - 0.7) + (x - 0.2))},
         2: {
-            0: 30 * y},
+            0: 30 * y * 2},
     }[der_x][der_y]
 
 
@@ -68,29 +68,27 @@ def simpson_method(xs, ys, i, step):
 xs = np.linspace(start_pos, end_pos, np.around((end_pos - start_pos) / step) + 1)
 ys_analytics = [analytic_solution(x) for x in xs]
 # ps = plt.subplot(211)
-plt.plot(xs, ys_analytics, color='red')
+
 
 ys_euler = [start_res]
 for i in range(0, len(xs) - 1):
     ys_euler.append(euler_method(xs[i], ys_euler[i], step))
-plt.plot(xs, ys_euler, color='blue')
 
 ys_tayler = [start_res]
 for i in range(0, len(xs) - 1):
     ys_tayler.append((tayler_method(xs[i], ys_tayler[i], step)))
-plt.plot(xs, ys_tayler, color='green')
 
 ys_simpson = [start_res]
 k_acceleration_1 = step * func(xs[0], ys_simpson[0])
-k_acceleration_2 = step * func(xs[0] + step / 2, ys_simpson[0] + k_acceleration_1 * step / 2)
-k_acceleration_3 = step * func(xs[0] + step / 2, ys_simpson[0] + k_acceleration_2 * step / 2)
-k_acceleration_4 = step * func(xs[0] + step / 2, ys_simpson[0] + k_acceleration_3 * step)
+k_acceleration_2 = step * func(xs[0] + step / 2, ys_simpson[0] + k_acceleration_1 / 2)
+k_acceleration_3 = step * func(xs[0] + step / 2, ys_simpson[0] + k_acceleration_2 / 2)
+k_acceleration_4 = step * func(xs[0] + step, ys_simpson[0] + k_acceleration_3)
 ys_simpson.append(
     ys_simpson[0] + (k_acceleration_1 + k_acceleration_2 * 2 + k_acceleration_3 * 2 + k_acceleration_4) / 6)
 
 for i in range(1, len(xs) - 1):
     ys_simpson.append(simpson_method(xs, ys_simpson, i, step))
-plt.plot(xs, ys_simpson, color='gray')
+
 
 def font_gen(color='black'):
     return {'family': 'serif',
@@ -99,10 +97,23 @@ def font_gen(color='black'):
             'size': 16,
             }
 
-
-plt.text(0.4, 0.2, 'analytic', fontdict=font_gen('red'))
-plt.text(0.4, 0.19, 'euler', fontdict=font_gen('blue'))
-plt.text(0.4, 0.18, 'taylor', fontdict=font_gen('green'))
 plt.text(0.1, 0.2, 'step:' + str(step), fontdict=font_gen())
+
+plt.plot(xs, ys_analytics, color='red')
+plt.text(0.4, 0.2, 'analytic', fontdict=font_gen('red'))
+
+# plt.plot(xs, ys_euler, color='blue')
+# plt.text(0.4, 0.19, 'euler', fontdict=font_gen('blue'))
+
+# plt.plot(xs, ys_tayler, color='green')
+# plt.text(0.4, 0.18, 'taylor', fontdict=font_gen('green'))
+
+plt.plot(xs, ys_simpson, color='gray')
 plt.text(0.4, 0.17, 'simpson', fontdict=font_gen('gray'))
+
 plt.show()
+
+# print("x |", "analytic", "euler", "tayler", "simpson")
+# for i in range(len(xs)):
+#     print("%.2f" % xs[i], "|", "%.10f;" % ys_analytics[i], "%.10f;" % ys_euler[i], "%.10f;" % ys_tayler[i],
+#           "%.10f;" % ys_simpson[i])
